@@ -12,6 +12,9 @@ from utils import jsonify
 from utils.spider import get_spider_col_fields
 from utils.log import other
 
+IGNORE_FIELD = [
+    '_id','hostname','md5','task_id'
+]
 
 class TaskApi(BaseApi):
     # collection name
@@ -165,7 +168,6 @@ class TaskApi(BaseApi):
         """
         args = self.parser.parse_args()
         page_size = args.get('page_size') or 10
-        page_num = args.get('page_num') or 1
 
         task = db_manager.get('tasks', id=id)
         spider = db_manager.get('spiders', id=task['spider_id'])
@@ -180,14 +182,23 @@ class TaskApi(BaseApi):
             for key,value in item.items():
                 if isinstance(value,str) == False:
                     continue
+                if key in IGNORE_FIELD:
+                    del item[key]
+                    continue
                 if len(value) > 500:
                     value = value[:500] + '...'
                     item[key] = value
             adjust_items += [item]
+
+        total_count = db_manager.count(col_name, {'task_id': id})
+        page_num = total_count / page_size
+        if isinstance(page_num,float):
+            page_num = int(page_num) + 1
+
         return {
             'status': 'ok',
             'fields': jsonify(fields),
-            'total_count': db_manager.count(col_name, {'task_id': id}),
+            'total_count': total_count,
             'page_num': page_num,
             'page_size': page_size,
             'items': jsonify(adjust_items)

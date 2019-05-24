@@ -200,7 +200,7 @@ class TaskApi(BaseApi):
         return {
             'status': 'ok',
             'fields': jsonify(fields),
-            'total_count': total_count,
+            'total_count': len(adjust_items),
             'page_num': page_num,
             'page_size': page_size,
             'items': jsonify(adjust_items)

@@ -21,6 +21,7 @@ class Scheduler(object):
 
     # scheduler instance
     scheduler = BackgroundScheduler(jobstores=jobstores)
+    scheduler.start()
 
     def execute_spider(self, id: str, params: str = None):
         query = {}
@@ -35,7 +36,7 @@ class Scheduler(object):
     def update(self):
         # remove all existing periodic jobs
         self.scheduler.remove_all_jobs()
-        self.mongo[MONGO_DB][self.task_col].remove()
+        self.mongo[MONGO_DB][self.task_col].delete_many({})
 
         periodical_tasks = db_manager.list('schedules', {})
         for task in periodical_tasks:

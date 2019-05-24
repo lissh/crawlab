@@ -193,7 +193,7 @@ class TaskApi(BaseApi):
             adjust_items += [adjust_item]
 
         total_count = db_manager.count(col_name, {'task_id': id})
-        page_num = total_count / page_size
+        page_num = len(adjust_items) / page_size
         if isinstance(page_num,float):
             page_num = int(page_num) + 1
 
@@ -224,4 +224,4 @@ class TaskApi(BaseApi):
 
 if __name__ == '__main__':
     app = TaskApi()
-    app.get_results('c204eea9-6a1d-46a0-9f87-468c6a3c2273')
+    app.get_results('fa2f4c70-8a78-4b8c-a6e6-ed418bd751c3')

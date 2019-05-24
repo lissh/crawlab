@@ -175,6 +175,7 @@ class TaskApi(BaseApi):
         if not col_name:
             return []
         fields = get_spider_col_fields(col_name)
+        fields = list(set(fields)-set(IGNORE_FIELD))
         items = db_manager.list(col_name, {'task_id': id})
 
         # 避免内容过长，做一下限制；同时剔除无用的字段不展示

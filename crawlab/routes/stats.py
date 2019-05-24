@@ -40,7 +40,7 @@ class StatsApi(BaseApi):
         # overview stats
         task_count = db_manager.count('tasks', {})
         spider_count = db_manager.count('spiders', {})
-        node_count = db_manager.count('nodes', {})
+        node_count = db_manager.count('nodes', {"status" : "online"})
         deploy_count = db_manager.count('deploys', {})
 
         # daily stats

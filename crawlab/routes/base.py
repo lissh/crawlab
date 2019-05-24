@@ -111,7 +111,7 @@ class BaseApi(Resource):
 
         self.after_update()
 
-        return item
+        return jsonify(item)
 
     def update(self, id: str = None) -> (dict, tuple):
         """

@@ -174,13 +174,23 @@ class TaskApi(BaseApi):
             return []
         fields = get_spider_col_fields(col_name)
         items = db_manager.list(col_name, {'task_id': id})
+        # 避免内容过长，做一下限制
+        adjust_items = []
+        for item in items:
+            for key,value in item.items():
+                if isinstance(value,str) == False:
+                    continue
+                if len(value) > 500:
+                    value = value[:500] + '...'
+                    item[key] = value
+            adjust_items += [item]
         return {
             'status': 'ok',
             'fields': jsonify(fields),
             'total_count': db_manager.count(col_name, {'task_id': id}),
             'page_num': page_num,
             'page_size': page_size,
-            'items': jsonify(items)
+            'items': jsonify(adjust_items)
         }
 
     def stop(self, id):

@@ -176,19 +176,20 @@ class TaskApi(BaseApi):
             return []
         fields = get_spider_col_fields(col_name)
         items = db_manager.list(col_name, {'task_id': id})
-        # 避免内容过长，做一下限制
+
+        # 避免内容过长，做一下限制；同时剔除无用的字段不展示
         adjust_items = []
         for item in items:
+            adjust_item = {}
             for key,value in item.items():
                 if isinstance(value,str) == False:
                     continue
                 if key in IGNORE_FIELD:
-                    del item[key]
                     continue
                 if len(value) > 500:
                     value = value[:500] + '...'
-                    item[key] = value
-            adjust_items += [item]
+                adjust_item[key] = value
+            adjust_items += [adjust_item]
 
         total_count = db_manager.count(col_name, {'task_id': id})
         page_num = total_count / page_size
@@ -218,3 +219,8 @@ class TaskApi(BaseApi):
             'id': id,
             'status': 'ok',
         }
+
+
+if __name__ == '__main__':
+    app = TaskApi()
+    app.get_results('c204eea9-6a1d-46a0-9f87-468c6a3c2273')

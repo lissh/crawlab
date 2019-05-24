@@ -1,5 +1,5 @@
 import json
-import os
+import os,re
 import shutil
 import subprocess
 from datetime import datetime
@@ -65,6 +65,42 @@ class SpiderApi(BaseApi):
         # spider site
         ('site', str),
     )
+
+    def post(self, id: str = None, action: str = None):
+        """
+        POST method of the given id for performing an action.
+        :param id:
+        :param action:
+        :return:
+        """
+        args = self.parser.parse_args()
+        name = args.get('name')
+        if name is not None :
+            spider = db_manager._get('spiders', {'name': name})
+            # new spider
+            if spider is None:
+                item = {}
+                for k in args.keys():
+                    item[k] = args.get(k)
+                item = db_manager.save(col_name='spiders', item=item)
+                spider = db_manager._get('spiders', {'name': name})
+                id = spider.get('_id')
+                return self.update(id)
+
+        # perform update action if action is not specified
+        if action is None:
+            return self.update(id)
+
+        # if action is not defined in the attributes, return 400 error
+        if not hasattr(self, action):
+            return {
+                       'status': 'ok',
+                       'code': 400,
+                       'error': 'action "%s" invalid' % action
+                   }, 400
+
+        # perform specified action of given id
+        return getattr(self, action)(id)
 
     def get(self, id=None, action=None):
         """
@@ -154,11 +190,12 @@ class SpiderApi(BaseApi):
                     spider['last_7d_tasks'] = get_last_n_day_tasks_count(spider_id=spider['_id'], n=5)
 
                 # append spider
-                items.append(spider)
+                # items.append(spider)
+            all_items = db_manager.list('spiders',{})
 
             return {
                 'status': 'ok',
-                'items': jsonify(items)
+                'items': jsonify(all_items)
             }
 
     def crawl(self, id: str) -> (dict, tuple):

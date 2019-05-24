@@ -38,6 +38,8 @@ class DeployApi(BaseApi):
             for item in items:
                 spider_id = item['spider_id']
                 spider = db_manager.get('spiders', id=str(spider_id))
+                if spider is None:
+                    db_manager.remove('deploys', {'spider_id':spider_id})
                 item['spider_name'] = spider['name']
                 deploys.append(item)
             return {

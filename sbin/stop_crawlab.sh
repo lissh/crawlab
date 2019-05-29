@@ -11,6 +11,6 @@ if [  -n "$pid0" ];then
 fi
 
 pid1=`ps -ef|grep "/usr/local/bin/celery flower"|grep -v grep|awk '{print $2}'`
-if [  -n "$pid3" ];then
+if [  -n "$pid1" ];then
     kill -9 `ps -ef|grep "/usr/local/bin/celery flower"|grep -v grep|awk '{print $2}'`
 fi

@@ -82,10 +82,14 @@ class SpiderApi(BaseApi):
                 item = {}
                 for k in args.keys():
                     item[k] = args.get(k)
-                item = db_manager.save(col_name='spiders', item=item)
+                db_manager.save(col_name='spiders', item=item)
                 spider = db_manager._get('spiders', {'name': name})
                 id = spider.get('_id')
                 return self.update(id)
+            else:
+                id = spider.get('_id')
+                return self.update(id)
+
 
         # perform update action if action is not specified
         if action is None:

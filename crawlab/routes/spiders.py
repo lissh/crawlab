@@ -88,7 +88,6 @@ class SpiderApi(BaseApi):
                 return self.update(id)
             else:
                 id = spider.get('_id')
-                return self.update(id)
 
 
         # perform update action if action is not specified

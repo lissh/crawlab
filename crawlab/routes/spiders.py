@@ -84,7 +84,7 @@ class SpiderApi(BaseApi):
                     item[k] = args.get(k)
                 db_manager.save(col_name='spiders', item=item)
                 spider = db_manager._get('spiders', {'name': name})
-                id = spider.get('_id')
+                id = str(spider.get('_id'))
                 return self.update(id)
             else:
                 id = str(spider.get('_id'))
